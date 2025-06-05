@@ -1,0 +1,39 @@
+trigger:
+- main
+
+pool:
+  name: 'azure-snyk-agent'
+
+variables:
+  azureWebAppName: 'my-java-webapp'
+  azureSubscription: 'azure-service-connection'
+  packageDirectory: '$(System.DefaultWorkingDirectory)/target'
+
+steps:
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'package'
+    options: '-DskipTests=true'
+  displayName: 'Build with Maven'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(packageDirectory)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
+    replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'drop'
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: '$(azureSubscription)'
+    appType: 'webApp'
+    appName: '$(azureWebAppName)'
+    package: '$(Build.ArtifactStagingDirectory)/app.zip'
+  displayName: 'Deploy to Azure Web App'
