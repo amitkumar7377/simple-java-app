@@ -35,7 +35,7 @@ steps:
   inputs:
     azureSubscription: '$(azureSubscription)'
     appName: '$(azureWebAppName)'
-    package: '$(System.DefaultWorkingDirectory)/path-to-your-jar/yourapp.jar'
+    package: '$(Build.ArtifactStagingDirectory)/app.zip'
     runtimeStack: 'JAVA|11-java11'  # Make sure this matches your Java version
     startupCommand: 'java -jar yourapp.jar'
  
