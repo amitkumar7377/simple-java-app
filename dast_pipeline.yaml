@@ -1,0 +1,30 @@
+trigger: none  # Manual or release-based trigger
+
+stages:
+  - stage: ZAP_DAST_Scan
+    displayName: "OWASP ZAP DAST Scan"
+    jobs:
+      - job: RunZAPScan
+        displayName: "Run OWASP ZAP Baseline Scan"
+        pool:
+          vmImage: 'ubuntu-latest'
+
+        steps:
+          - script: |
+              echo "Pulling OWASP ZAP Docker image..."
+              docker pull owasp/zap2docker-stable
+
+              echo "Running ZAP Baseline Scan..."
+              docker run --rm -v $(System.DefaultWorkingDirectory):/zap/wrk:rw \
+                owasp/zap2docker-stable zap-baseline.py \
+                -t https://github.com/amitkumar7377 \
+                -g gen.conf -r zap_report.html
+
+            displayName: "Run OWASP ZAP Scan"
+
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: 'zap_report.html'
+              artifactName: 'ZAP-DAST-Report'
+              publishLocation: 'pipeline'
+            displayName: "Publish ZAP Report"
