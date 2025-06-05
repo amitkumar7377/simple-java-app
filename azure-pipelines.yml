@@ -37,7 +37,7 @@ steps:
     appName: '$(azureWebAppName)'
     package: '$(Build.ArtifactStagingDirectory)/app.zip'
     runtimeStack: 'JAVA|11-java11'  # Make sure this matches your Java version
-    startupCommand: 'java -jar yourapp.jar'
+    startupCommand: 'simple-java-app-1.0.0.jar'
  
 
 
