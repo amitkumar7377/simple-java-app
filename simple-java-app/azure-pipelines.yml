@@ -1,6 +1,7 @@
 trigger:
-- master
-
+  branches:
+    include:
+      - "*"
 pool:
   name: 'azure-snyk-agent'
 
