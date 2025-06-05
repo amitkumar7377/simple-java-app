@@ -38,5 +38,5 @@ steps:
     package: '$(System.DefaultWorkingDirectory)/path-to-your-jar/yourapp.jar'
     runtimeStack: 'JAVA|11-java11'  # Make sure this matches your Java version
     startupCommand: 'java -jar yourapp.jar'
-  displayName: 'Deploy to Azure Web App'
+
 
