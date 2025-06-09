@@ -1,43 +1,25 @@
 trigger:
   branches:
     include:
-      - "*"
-pool:
-  name: 'azure-snyk-agent'
+      - main
 
-variables:
-  azureWebAppName: 'my-java-webapp'
-  azureSubscription: 'azure-service-connection'
-  packageDirectory: '$(System.DefaultWorkingDirectory)/target'
+pool:
+  vmImage: 'ubuntu-latest' 
 
 steps:
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
-    goals: 'package'
-    options: '-DskipTests=true'
-  displayName: 'Build with Maven'
+    goals: 'clean install'
+    jdkVersionOption: 1.11
+    mavenVersionOption: Default
 
-- task: ArchiveFiles@2
+- task: CopyFiles@2
   inputs:
-    rootFolderOrFile: '$(packageDirectory)'
-    includeRootFolder: false
-    archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
-    replaceExistingArchive: true
+    contents: '**/target/*.jar'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: 'drop'
-
-- task: AzureWebApp@1
-  inputs:
-    azureSubscription: '$(azureSubscription)'
-    appName: '$(azureWebAppName)'
-    package: '$(Build.ArtifactStagingDirectory)/app.zip'
-    runtimeStack: 'JAVA|11-java11'  # Make sure this matches your Java version
-    startupCommand: 'simple-java-app-1.0.0.jar'
- 
-
-
